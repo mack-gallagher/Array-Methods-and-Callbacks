@@ -7,14 +7,40 @@ Practice accessing data by console.log-ing the following pieces of data note, yo
 
 //(a) Home Team name for 2014 world cup final
 
+const data2014 = fifaData.filter(x => x["Year"]===2014&&x["Stage"]==="Final");
+
+console.log();
+console.log('*************************');
+console.log('Data from 2014 World Cup:');
+console.log('*************************');
+
+data2014.forEach(x => console.log(`Home Team: ${x["Home Team Name"]}`));
+
 //(b) Away Team name for 2014 world cup final
+
+data2014.forEach(x => console.log(`Away Team: ${x["Away Team Name"]}`));
 
 //(c) Home Team goals for 2014 world cup final
 
+data2014.forEach(x => console.log(`Goals scored by home team: ${x["Home Team Goals"]}`));
+
 //(d) Away Team goals for 2014 world cup final
+
+data2014.forEach(x => console.log(`Goals scored by away team: ${x["Away Team Goals"]}`));
 
 //(e) Winner of 2014 world cup final */
 
+data2014.forEach(x => {
+  let winningTeam = '';
+  data2014.forEach(x => {
+    x["Home Team Goals"]>x["Away Team Goals"]?
+      winningTeam = x["Home Team Name"]
+     :winningTeam = x["Away Team Name"];
+  });
+  console.log(`WINNER: ${winningTeam}!`);
+});
+
+console.log('*************************');
 
 /* 🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀 Task 2: 🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀 
 Use getFinals to do the following:
@@ -24,8 +50,13 @@ Use getFinals to do the following:
 hint - you should be looking at the stage key inside of the objects
 */
 
-function getFinals(/* code here */) {
-   /* code here */
+function getFinals(data) {
+  const finalMakers = [];
+  const finals = data.filter(x => x["Stage"]==="Final");
+  finals.forEach(x => {
+      finalMakers.push(x);
+    });
+  return finalMakers;
 }
 
 
@@ -36,8 +67,13 @@ Use the higher-order function called getYears to do the following:
 2. Receive a callback function getFinals from task 2 
 3. Return an array called years containing all of the years in the getFinals data set*/
 
-function getYears(/* code here */) {
-    /* code here */
+function getYears(arr, callbackFn) {
+    const finalObjs = callbackFn(arr);
+    const allFifaYears = [];
+    finalObjs.forEach(x => {
+      allFifaYears.push(x["Year"]);
+    });
+    return allFifaYears;
 }
 
 
@@ -49,8 +85,15 @@ Use the higher-order function getWinners to do the following:
 3. Determines the winner (home or away) of each `finals` game. 
 4. Returns the names of all winning countries in an array called `winners` */ 
 
-function getWinners(/* code here */) {
-    /* code here */
+function getWinners(arr, finalObjGetter) {
+    const winners = [];
+    const finalObjs = finalObjGetter(arr);
+    finalObjs.forEach(x => {
+      x["Home Team Goals"]>x["Away Team Goals"]?
+        winners.push(x["Home Team Name"])
+       :winners.push(x["Away Team Name"])
+      });
+    return winners;
 }
 
 
@@ -66,8 +109,18 @@ Use the higher-order function getWinnersByYear to do the following:
 hint: the strings returned need to exactly match the string in step 4.
  */
 
-function getWinnersByYear(/* code here */) {
-    /* code here */
+function getWinnersByYear(arr, finalFilterer, yearGetter, winnersGetter) {
+    const stringData = [];
+    const years = yearGetter(arr, finalFilterer);
+    years.forEach(x => stringData.push([x]));
+    const winners = winnersGetter(arr, finalFilterer);
+    for (let i = 0; i < winners.length; i++) {
+      stringData[i].push(winners[i]);
+    };
+    const strs = stringData.map(x =>
+      `In ${x[0]}, ${x[1]} won the world cup!`
+    );
+    return strs;    
 }
 
 
@@ -82,11 +135,15 @@ Use the higher order function getAverageGoals to do the following:
  Example of invocation: getAverageGoals(getFinals(fifaData));
 */
 
-function getAverageGoals(/* code here */) {
-   /* code here */
+function getAverageGoals(finals) {
+  console.log(finals[0]);
+  const allGoalsSum = finals.reduce((acc, curr) => acc+curr["Home Team Goals"]+curr["Away Team Goals"],0);
+  const n = finals.length; // the number we divide our total by to get the mean
+  const rawMean = allGoalsSum/n;
+  return rawMean.toFixed(2);
 }
 
-
+getAverageGoals(getFinals(fifaData));
 
 
 /// 🥅 STRETCH 🥅 ///
@@ -127,6 +184,8 @@ function badDefense(/* code here */) {
 
 /* If you still have time, use the space below to work on any stretch goals of your chosing as listed in the README file. */
 
+
+console.log();
 
 /* 🛑🛑🛑🛑🛑 Please do not modify anything below this line 🛑🛑🛑🛑🛑 */
 function foo(){
