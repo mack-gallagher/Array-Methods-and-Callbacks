@@ -10,7 +10,7 @@ Practice accessing data by console.log-ing the following pieces of data note, yo
 const data2014 = fifaData.filter(x => x["Year"]===2014&&x["Stage"]==="Final");
 
 console.log();
-console.log('*************************');
+console.log('************************');
 console.log('Data from 2014 World Cup:');
 console.log('*************************');
 
@@ -97,7 +97,6 @@ function getWinners(arr, finalObjGetter) {
 }
 
 
-
 /* 🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀 Task 5: 🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀 
 Use the higher-order function getWinnersByYear to do the following:
 1. Receive an array
@@ -124,7 +123,6 @@ function getWinnersByYear(arr, finalFilterer, yearGetter, winnersGetter) {
 }
 
 
-
 /* 🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀 Task 6: 🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀
 Use the higher order function getAverageGoals to do the following: 
  1. Receive the callback function getFinals from task 2 ensure you pass in the data as an argument
@@ -136,7 +134,6 @@ Use the higher order function getAverageGoals to do the following:
 */
 
 function getAverageGoals(finals) {
-  console.log(finals[0]);
   const allGoalsSum = finals.reduce((acc, curr) => acc+curr["Home Team Goals"]+curr["Away Team Goals"],0);
   const n = finals.length; // the number we divide our total by to get the mean
   const rawMean = allGoalsSum/n;
@@ -167,6 +164,11 @@ function getCountryWins(data, teamInitials) {
   },0);
 }
 
+console.log();
+console.log('************************');
+console.log(' TESTING STRETCH TASKS: ');
+console.log('************************');
+
 console.log(`Brazil has won the world cup ${getCountryWins(fifaData, "BRA")} times.`);
 
 
@@ -174,22 +176,78 @@ console.log(`Brazil has won the world cup ${getCountryWins(fifaData, "BRA")} tim
 /* 💪💪💪💪💪 Stretch 2: 💪💪💪💪💪 
 Write a function called getGoals() that accepts a parameter `data` and returns the team with the most goals score per appearance (average goals for) in the World Cup finals */
 
-function getGoals(/* code here */) {
+function getGoals(data) {
+  const finals = data.filter(x => x["Stage"]==="Final");
+  const totalGoalsAndTotalAppearances = finals.reduce((acc,x) => 
+    {
+      const homeTeamName = x["Home Team Name"];
+      if (acc.hasOwnProperty(homeTeamName)) {
+        acc[homeTeamName][0] += x["Home Team Goals"];
+        acc[homeTeamName][1]++;
+      } else {
+        acc[homeTeamName] = [x["Home Team Goals"], 1];
+      }
+      const awayTeamName = x["Away Team Name"];
+      if (acc.hasOwnProperty(awayTeamName)) {
+        acc[awayTeamName][0] += x["Away Team Goals"];
+        acc[awayTeamName][1]++;
+      } else {
+        acc[awayTeamName] = [x["Home Team Goals"], 1];
+      }
 
-    /* code here */
+      return acc;
+    },{});
+ 
+    const teamsAndAvgs = [];
+    const template = Object.entries(totalGoalsAndTotalAppearances);
+    for (let i = 0; i < template.length; i++) {
+      teamsAndAvgs.push(template[i][0], template[i][1][0]/template[i][1][1]);
+    }
 
+    let highestAvg = 0;
+    let proudestTeam = '';
+    for (let i = 0; i < teamsAndAvgs.length; i++) {
+      if (teamsAndAvgs[1] > highestAvg) {
+        highestAvg = teamsAndAvgs[1];
+        proudestTeam = teamsAndAvgs[0];
+      }
+    }
+
+    return proudestTeam;
+ 
 }
+
+console.log(`The team with the highest average for goals in the World Cup: ${getGoals(fifaData)}`);
 
 
 /* 💪💪💪💪💪 Stretch 3: 💪💪💪💪💪
 Write a function called badDefense() that accepts a parameter `data` and calculates the team with the most goals scored against them per appearance (average goals against) in the World Cup finals */
 
-function badDefense(/* code here */) {
+function badDefense(data) {
+    const finals = data.filter(x => x["Stage"]==="Final");
+    const teamsByMostGoalsScoredAgainst = finals.reduce((acc, x) => {
+      acc.hasOwnProperty(["Home Team Name"])?
+        acc[x["Home Team Name"]] += x["Away Team Goals"]
+       :acc[x["Home Team Name"]] = x["Away Team Goals"];
+      acc.hasOwnProperty(["Away Team Name"])?
+        acc[x["Away Team Name"]] += x["Home Team Goals"]
+       :acc[x["Away Team Name"]] = x["Home Team Goals"];
+      return acc;
+    },{});
 
-    /* code here */
-
+    const template = Object.entries(teamsByMostGoalsScoredAgainst);
+    let mostBiffs = 0;
+    let mostEmbarrassedTeam = '';
+    for (let i = 0; i < template.length; i++) {
+      if (template[i][1] > mostBiffs) {
+        mostBiffs = template[i][1];
+        mostEmbarrassedTeam = template[i][0];
+      }
+    }
+    return mostEmbarrassedTeam; 
 }
 
+console.log(`The team with the most goals scored against them in the World Cup is: ${badDefense(fifaData)}`);
 
 /* If you still have time, use the space below to work on any stretch goals of your chosing as listed in the README file. */
 
