@@ -154,11 +154,20 @@ Create a function called `getCountryWins` that takes the parameters `data` and `
 Hint: Investigate your data to find "team initials"!
 Hint: use `.reduce` */
 
-function getCountryWins(/* code here */) {
-
-    /* code here */
-
+function getCountryWins(data, teamInitials) {
+  return data.reduce((acc, x) => {
+    if (x["Stage"]==="Final" && (
+        (x["Home Team Initials"]===teamInitials && x["Home Team Goals"] > x["Away Team Goals"])
+      ||(x["Away Team Initials"]===teamInitials && x["Away Team Goals"] > x["Home Team Goals"])
+        )
+      ) {
+          acc++;
+      }
+    return acc;
+  },0);
 }
+
+console.log(`Brazil has won the world cup ${getCountryWins(fifaData, "BRA")} times.`);
 
 
 
